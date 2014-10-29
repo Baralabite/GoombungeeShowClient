@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<!-- Displays a "Connecting" dialog. -->
+
+<html>
+    
+<head> 
+    <title>Lynxmotion APod Controller</title> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.css" />
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script>
+</head>
+
+<body>
+    
+    <div data-role="page" data-theme="a">
+        <script>
+            
+            String.prototype.format = function () {
+                var i = 0, args = arguments;
+                return this.replace(/{}/g, function () {
+                    return typeof args[i] != 'undefined' ? args[i++] : '';
+                });
+            };
+
+            $(document).ready(function(){
+                $.mobile.loading( 'show', {
+                text: 'Connecting...',
+                textVisible: true,
+                theme: 'a',
+                html: ""
+                });
+            });
+            
+            $.ajax({
+                type: "POST",
+                url: "api.php",
+                data: {message: "{'command':'handshake'}"},
+                success: onHandshakeResponse,
+                dataType: "text"
+            });
+            
+            
+            
+            function onHandshakeResponse(data) {
+                data = JSON.parse(data);
+                if (data.response == "handshook") {
+                    console.log("Connected successfully!")
+                    $.mobile.loading( 'show', {
+                        text: 'Lining up in queue...',
+                        textVisible: true,
+                        theme: 'a',
+                        html: ""
+                    });
+                    
+                    clientID = generateID();
+                    console.log("Your ID is: "+clientID);
+                    
+                    $.ajax({
+                        type: "POST",
+                        url: "api.php",                        
+                        data: {message: "{'command':'queue "+clientID+"'}"},
+                        success: onQueueResponse,
+                        dataType: "text"
+                    });                    
+                }
+            }
+            
+            /* When there's a response from the server, and it's correct, go to lobby. */
+            function onQueueResponse(data){
+                data = JSON.parse(data);
+                if (data.response == "queued") {
+                    $.mobile.changePage("lobby.html");                    
+                }
+                else {
+                    console.log("An error appeard to have happened...");
+                }
+            }
+            
+            
+            
+            /* Randomly generates a string ID thingy. */
+            function generateID(){
+                var text = "";
+                var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+                for( var i=0; i < 5; i++ )
+                    text += possible.charAt(Math.floor(Math.random() * possible.length));            
+                return text;
+            }
+            
+        </script>
+    </div>
+    
+</body>
+</html>
