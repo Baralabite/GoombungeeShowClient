@@ -99,9 +99,8 @@
             
             function updateETA(){
                 controlETA--;
-
                 if (controlETA <= 0) {
-                    setTimeout(connectToRobot, 1500)
+                    setTimeout(connectToRobot, 100)
                     window.clearTimeout(t1);
                     window.clearTimeout(t2);
                     window.clearTimeout(t3);
@@ -115,12 +114,12 @@
             
             function connectToRobot(){
                 function connectResponse(data){
-                    data = JSON.parse(data);
+                    data = JSON.parse(data);                    
                     if (data.response == "True") {
                         $.mobile.changePage("control.html");
                     } else{
-                        $("#instructions").hide()
-                        $("#error").show()
+                        console.log("Things are taking a little longer than expected, hold on...");
+                        setTimeout(connectToRobot, 500);
                     }
                 }
                 $.ajax({
