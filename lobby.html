@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <!-- Displays a "Connecting" dialog. -->
 
 <html>
@@ -36,11 +35,14 @@
         
         <script>
             /* Does a bit of a self test - Does clientID exist? */
-            console.log(typeof clientID == "undefined");
             if (typeof clientID == "undefined") {
                 $("#instructions").hide()
                 $("#error").show()
             }
+            
+            
+            
+            
             
             /* Mess of code that executes multiple ajax queries */
             /* massAJAX(function onFinishCallback, [queryText, onQueryFinishCallback], ...); */
@@ -52,7 +54,7 @@
                     $.ajax({
                         type: "POST",
                         url: "api.php",
-                        data: {message: "{'command':'{}'}".format(arguments[i][0])},
+                        data: {message: "~'command':'{}'~".format(arguments[i][0])},
                         success: function(data){this.callback(data); onGot(data)},
                         context:{callback: arguments[i][1]},
                         dataType: "text"
@@ -67,21 +69,73 @@
                 }
             }
             
-            updateValues(onFinish,
-                     ["getControlTime", onGetControlTime],
-                     ["getQueuedPeople", onGetQueuedPeople],
-                     ["getETA", onGetETA]);
+            queuedPeople = 10;
+            controlTime = 10;
+            controlETA = 10;
+            updateLoopTimeoutID = 0;
             
-            function onGetControlTime(data) {controlTime = JSON.parse(data).response}
-            function onGetQueuedPeople(data) {queuedPeople = JSON.parse(data).response}
-            function onGetETA(data) {controlETA = JSON.parse(data).response}
-            function onFinish(){
-                console.log("Finished!");
-                $("#numOfPeopleLabel").text(queuedPeople);            
-                $("#controlTimeLabel").text(controlTime);
-                $("#etaLabel").text(controlETA);
+            function updateLoop(){
+                updateValues(onFinish,
+                         ["cookieDump {}".format(JSON.stringify($.cookie())), function(){}],
+                         ["getControlTime {}".format(clientID), onGetControlTime],
+                         ["getQueuedPeople {}".format(clientID), onGetQueuedPeople],
+                         ["getETA {}".format(clientID), onGetETA]);
+                
+                function onGetControlTime(data) {controlTime = JSON.parse(data).response}
+                function onGetQueuedPeople(data) {queuedPeople = JSON.parse(data).response}
+                function onGetETA(data) {controlETA = JSON.parse(data).response}
+                function onFinish(){
+                    $("#numOfPeopleLabel").text(queuedPeople);            
+                    $("#controlTimeLabel").text(controlTime);
+                    $("#etaLabel").text(controlETA);
+                }
+                
+                t1 = setTimeout(updateETA, 1000);
+                t2 = setTimeout(updateETA, 2000);
+                t3 = setTimeout(updateETA, 3000);
+                t4 = setTimeout(updateETA, 4000);                
+                updateLoopTimeoutID = setTimeout(updateLoop, 5000);                     
             }
-             
+            
+            function updateETA(){
+                controlETA--;
+
+                if (controlETA <= 0) {
+                    setTimeout(connectToRobot, 1500)
+                    window.clearTimeout(t1);
+                    window.clearTimeout(t2);
+                    window.clearTimeout(t3);
+                    window.clearTimeout(t4);
+                    window.clearTimeout(updateLoopTimeoutID);
+                } else {
+                    $("#etaLabel").text(controlETA);
+                }                    
+                
+            }
+            
+            function connectToRobot(){
+                function connectResponse(data){
+                    data = JSON.parse(data);
+                    if (data.response == "True") {
+                        $.mobile.changePage("control.html");
+                    } else{
+                        $("#instructions").hide()
+                        $("#error").show()
+                    }
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "api.php",
+                    data: {message: "~'command':'{} {}'~".format("isTurn", clientID)},
+                    success: connectResponse,
+                    dataType: "text"
+                });
+            }            
+            
+            //Make sure to clear the timeout!
+            
+            updateLoop()
+            
         </script>
         
     </div>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!-- Displays a "Connecting" dialog. -->
+
+<html>
+    
+<head> 
+    <title>Lynxmotion APod Controller</title> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.css" />
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script>
+</head>
+
+<body>
+    
+    <div id="control" data-role="page">
+        <div data-role="header"><h1>Control Center</h1></div>
+        <div data-role="content">
+            
+            <button id="closeJaw" class="ui-btn ui-corner-all">Close Jaw</button>
+            <button id="openJaw" class="ui-btn ui-corner-all">Open Jaw</button>
+            
+        </div>
+        
+        
+            <script>
+                
+                function api(command) {
+                    function callback(data){
+                        data = JSON.parse(data);
+                        console.log(data);
+                        if (data.response=="turnDone") {
+                            $.mobile.changePage("turnUpDialog.html");
+                        }
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "api.php",
+                        data: {message: "~'command':'{}'~".format(command)},
+                        success: callback,
+                        dataType: "text"
+                    });
+                }
+                
+                
+                $("#closeJaw").click(function(){
+                    api("robot {} {}".format(clientID, "closeJaw"));
+                });
+                
+                $("#openJaw").click(function(){
+                    api("robot {} {}".format(clientID, "openJaw"));
+                });
+                
+                
+                
+                
+                
+                
+            </script>        
+    </div>
+    
+</body>
+</html>

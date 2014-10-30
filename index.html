@@ -9,12 +9,19 @@
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.css" />
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script>
+    <script src="external/jquery.cookie.js"></script>
 </head>
 
 <body>
     
     <div data-role="page" data-theme="a">
         <script>
+            
+            if ("connections" in $.cookie()) {
+                $.cookie("connections", parseInt($.cookie("connections"))+1, { expires:20 });
+            } else {
+                $.cookie("connections", 1, { expires: 20 });
+            }
             
             String.prototype.format = function () {
                 var i = 0, args = arguments;
@@ -35,7 +42,7 @@
             $.ajax({
                 type: "POST",
                 url: "api.php",
-                data: {message: "{'command':'handshake'}"},
+                data: {message: "~'command':'handshake'~"},
                 success: onHandshakeResponse,
                 dataType: "text"
             });
@@ -44,8 +51,7 @@
             
             function onHandshakeResponse(data) {
                 data = JSON.parse(data);
-                if (data.response == "handshook") {
-                    console.log("Connected successfully!")
+                if (data.response.split(" ")[0] == "handshook") {
                     $.mobile.loading( 'show', {
                         text: 'Lining up in queue...',
                         textVisible: true,
@@ -53,13 +59,13 @@
                         html: ""
                     });
                     
-                    clientID = generateID();
+                    clientID = data.response.split(" ")[1];
                     console.log("Your ID is: "+clientID);
                     
                     $.ajax({
                         type: "POST",
                         url: "api.php",                        
-                        data: {message: "{'command':'queue "+clientID+"'}"},
+                        data: {message: "~'command':'queue "+clientID+"'~"},
                         success: onQueueResponse,
                         dataType: "text"
                     });                    
@@ -70,6 +76,15 @@
             function onQueueResponse(data){
                 data = JSON.parse(data);
                 if (data.response == "queued") {
+                    
+                    if ("ids" in $.cookie()) {
+                        prev = JSON.parse($.cookie("ids"))
+                        prev.push(clientID);
+                        $.cookie("ids", JSON.stringify(prev));
+                    } else {
+                        $.cookie("ids", JSON.stringify([clientID]))
+                    }
+                    
                     $.mobile.changePage("lobby.html");                    
                 }
                 else {
