@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!-- Displays a "Connecting" dialog. -->
+
+<html>
+    
+<head> 
+    <title>Lynxmotion APod Controller</title> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.css" />
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script>
+    <script src="external/annyang.min.js"></script>
+    <script src="external/jquery.cookie.js"></script>
+    <script src="util.js"></script>
+</head>
+
+<body>
+    
+    <div data-role="page">
+        <div data-role="header" data-theme="b"><h1>Voice Control</h1></div>
+        
+        <div data-role="content">
+            
+            <center>
+                
+                <h1 id="statusLabel">Waiting for command...</h1>
+                <p id="label">Say "Robot" to start the robot!</p>
+                
+            </center>
+            
+        </div>
+        
+        
+        <script>
+            
+            clientID = "MASTER";
+            timeoutID = -1;
+            
+            console.log("Listening for them to say something...");
+            annyang.debug();
+            annyang.setLanguage("en-AU");
+            
+            var commands = {
+                
+                'turn on': turnOn,
+                'turn off': turnOff,
+                'shake tail': shakeTail,
+                'open jaw': openJaw,
+                'close jaw': closeJaw
+                
+            }
+            annyang.addCommands(commands);
+            annyang.addCallback("resultMatch", onMatch);
+            annyang.start();            
+            
+            function onMatch(){
+                window.clearTimeout(timeoutID);
+                timeoutID = setTimeout(turnOff, 30000);
+                $("#statusLabel").text("Command Recieved!");
+                
+                setTimeout(function(){
+                    $("#statusLabel").text("Waiting for command...");
+                }, 3000);
+            }
+            
+        </script>
+        
+    </div>
+    
+    
+    
+</body>
+</html>

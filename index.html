@@ -10,25 +10,13 @@
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script>
     <script src="external/jquery.cookie.js"></script>
+    <script src="util.js"></script>
 </head>
 
 <body>
     
     <div data-role="page" data-theme="a">
         <script>
-            
-            if ("connections" in $.cookie()) {
-                $.cookie("connections", parseInt($.cookie("connections"))+1, { expires:20 });
-            } else {
-                $.cookie("connections", 1, { expires: 20 });
-            }
-            
-            String.prototype.format = function () {
-                var i = 0, args = arguments;
-                return this.replace(/{}/g, function () {
-                    return typeof args[i] != 'undefined' ? args[i++] : '';
-                });
-            };
 
             $(document).ready(function(){
                 $.mobile.loading( 'show', {
@@ -90,17 +78,6 @@
                 else {
                     console.log("An error appeard to have happened...");
                 }
-            }
-            
-            
-            
-            /* Randomly generates a string ID thingy. */
-            function generateID(){
-                var text = "";
-                var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-                for( var i=0; i < 5; i++ )
-                    text += possible.charAt(Math.floor(Math.random() * possible.length));            
-                return text;
             }
             
         </script>

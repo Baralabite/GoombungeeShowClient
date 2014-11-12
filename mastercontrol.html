@@ -32,21 +32,24 @@
             <button id="lowerTail" class="ui-btn ui-corner-all">Open Jaw</button>-->
             
             <ul data-role="listview" data-icon="false">
+			
+				<li data-role="list-divider" style="text-align:center"> Main Control </li>
+				<li><a onclick="turnOn()" style="text-align:center">Turn On</a></li>
+                <li><a onclick="turnOff()" style="text-align:center">Turn Off</a></li>
                 
                 <li data-role="list-divider" style="text-align:center">Mandibles</li>                
                 <li><a onclick="openJaw()" style="text-align:center">Jaw Open</a></li>
                 <li><a onclick="closeJaw()" style="text-align:center">Jaw Close</a></li>
                 <li><label for="jawRollSlider">Roll:</label><input id="jawRollSlider" onchange="rollJaw()" type="range" min="50" max="130" value="90" step="10"></li>
                 <li><label for="jawPitchSlider">Pitch:</label><input id="jawPitchSlider" onchange="pitchJaw()" type="range" min="50" max="130" value="90" step="10"></li>
-                <li><label for="jawYawSlider">Yaw:</label><input id="jawYawSlider" onchange="yawJaw()" type="range" min="50" max="130" value="90" step="10"></li>
-                
-                <li data-role="list-divider" style="text-align:center">Body</li>                
-                <li><a href="#" style="text-align:center">Walk</a></li>
-                <li><a href="#" style="text-align:center">Stop</a></li>
+                <li><label for="jawYawSlider">Yaw:</label><input id="jawYawSlider" onchange="yawJaw()" type="range" min="50" max="130" value="90" step="10"></li>                                
                 
                 <li data-role="list-divider" style="text-align:center">Tail</li>                
                 <li><label for="tailPitchSlider">Pitch:</label><input id="tailPitchSlider" onchange="pitchTail()" type="range" min="50" max="130" value="90" step="10"></li>
                 <li><label for="tailYawSlider">Yaw:</label><input id="tailYawSlider" onchange="yawTail()" type="range" min="50" max="130" value="90" step="10"></li>
+				
+				<li data-role="list-divider" style="text-align:center">Sequences</li>                
+                <li><a onclick="shakeTail()" style="text-align:center">Shake Tail</a></li>
                 
             </ul>
             
@@ -56,63 +59,8 @@
         </div> 
         
         <script>
-		
-			String.prototype.format = function () {
-                var i = 0, args = arguments;
-                return this.replace(/{}/g, function () {
-                    return typeof args[i] != 'undefined' ? args[i++] : '';
-                });
-            };
-            
-            
-            function api(command) {
-                function callback(data){
-                    data = JSON.parse(data);
-                    console.log(data);
-                    if (data.response=="turnDone") {
-                        $.mobile.changePage("turnUpDialog.html");
-                    }
-                }
-                $.ajax({
-                    type: "POST",
-                    url: "api.php",
-                    data: {message: "~'command':'{}'~".format(command)},
-                    success: callback,
-                    dataType: "text"
-                });
-            }
-            
-            
-            /* Jaw Modification Code */
-            
-            function closeJaw(){
-                api("robot {} {}".format("MASTER", "closeJaw"));
-            }
-            
-            function openJaw(){
-                api("robot {} {}".format("MASTER", "openJaw"));
-            }
-            
-            function rollJaw() {
-                api("robot {} {} {}".format("MASTER", "rollJaw", $("#jawRollSlider").val()));
-            }
-            
-            function pitchJaw() {
-                api("robot {} {} {}".format("MASTER", "pitchJaw", $("#jawPitchSlider").val()));
-            }
-            
-            function yawJaw() {
-                api("robot {} {} {}".format("MASTER", "yawJaw", $("#jawYawSlider").val()));
-            }
-            
-            /* Tail Modification Code */
-            function pitchTail() {
-                api("robot {} {} {}".format("MASTER", "pitchTail", $("#tailPitchSlider").val()));
-            }
-            
-            function yawTail() {
-                api("robot {} {} {}".format("MASTER", "yawTail", $("#tailYawSlider").val()));
-            }                   
+	    
+	    clientID = "MASTER";
             
         </script>        
     </div>
