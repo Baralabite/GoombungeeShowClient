@@ -29,7 +29,7 @@
         
         clientID = "MASTER";
         
-        var time = 30;
+        var time = 600;
         setTimeout(countdown, 1000);
         
         function countdown() {
@@ -39,8 +39,8 @@
             $("#time").text(minutes+":"+seconds+" minutes");
             setTimeout(countdown, 1000);
             if(time==0){
-                mexicanWave();
-                time = 30;
+                time = 600;
+                mexicanWave();                
             }
         }
         
