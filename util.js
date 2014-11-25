@@ -79,4 +79,8 @@ function yawTail() {
 /* Sequence Code */
 function shakeTail() {
     api("robot {} {}".format(clientID, "shakeTail"));
+}
+
+function mexicanWave() {
+    api("robot {} {}".format(clientID, "mexicanWave"));
 }   
