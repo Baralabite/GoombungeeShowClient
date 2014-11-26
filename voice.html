@@ -37,11 +37,11 @@
                             <tr><th>Command</th><th>Description</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>Turn On</td><td>Turns robot on</td></tr>
-                            <tr class="alt"><td>Turn Off</td><td>Turns robot off</td></tr>
-                            <tr><td>Open Jaw</td><td>Opens robot's jaw</td></tr>
-                            <tr class="alt"><td>Close Jaw</td><td>Closes robot's jaw</td></tr>
-                            <tr><td>Shake Tail</td><td>Shakes robot's tail</td></tr>
+                            <tr><td>On</td><td>Turns robot on</td></tr>
+                            <tr class="alt"><td>Off</td><td>Turns robot off</td></tr>
+                            <tr><td>Open</td><td>Opens robot's jaw</td></tr>
+                            <tr class="alt"><td>Shut</td><td>Closes robot's jaw</td></tr>
+                            <tr><td>Shake</td><td>Shakes robot's tail</td></tr>
                         </tbody>
                         </table>
                     </div>
@@ -61,11 +61,11 @@
             
             var commands = {
                 
-                'turn on': turnOn,
-                'turn off': turnOff,
-                'shake tail': shakeTail,
-                'open jaw': openJaw,
-                'close jaw': closeJaw
+                'stand': turnOn,
+                'sit': turnOff,
+                'shake': shakeTail,
+                'open': openJaw,
+                'shut': closeJaw
                 
             }
             annyang.addCommands(commands);
